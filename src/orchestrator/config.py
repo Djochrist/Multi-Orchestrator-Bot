@@ -1,7 +1,7 @@
 """Configuration du système de trading."""
 
 import os
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 class Config:
@@ -9,29 +9,29 @@ class Config:
 
     # Paramètres par défaut
     DEFAULTS = {
-        'trading': {
-            'symbol': 'BTC/USD',
-            'default_quantity': 0.01,
-            'max_position_size': 0.1,
+        "trading": {
+            "symbol": "BTC/USD",
+            "default_quantity": 0.01,
+            "max_position_size": 0.1,
         },
-        'backtest': {
-            'recent_days': 30,
-            'min_data_points': 50,
+        "backtest": {
+            "recent_days": 30,
+            "min_data_points": 50,
         },
-        'risk': {
-            'max_drawdown': 0.1,  # 10%
-            'max_trades_per_day': 5,
+        "risk": {
+            "max_drawdown": 0.1,  # 10%
+            "max_trades_per_day": 5,
         },
-        'logging': {
-            'level': 'INFO',
-            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        }
+        "logging": {
+            "level": "INFO",
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        },
     }
 
     @classmethod
     def get(cls, key: str, default: Any = None) -> Any:
         """Récupère une valeur de configuration."""
-        keys = key.split('.')
+        keys = key.split(".")
         value = cls.DEFAULTS
 
         try:
@@ -44,4 +44,4 @@ class Config:
     @classmethod
     def is_live_mode(cls) -> bool:
         """Vérifie si le mode live est activé."""
-        return os.getenv('LIVE', 'false').lower() == 'true'
+        return os.getenv("LIVE", "false").lower() == "true"

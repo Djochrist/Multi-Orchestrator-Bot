@@ -24,8 +24,11 @@ jobs:
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-    - name: Sync dependencies
-      run: uv sync --dev
+    - name: Sync dependencies with dev tools
+      run: uv sync --group dev
+
+    - name: Install package in development mode
+      run: uv pip install -e .
 
     - name: Run tests
       run: uv run pytest --tb=short
@@ -49,16 +52,17 @@ jobs:
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-    - name: Sync dependencies
-      run: uv sync --dev
+    - name: Sync dependencies with dev tools
+      run: uv sync --group dev
+
+    - name: Install package in development mode
+      run: uv pip install -e .
 
     - name: Lint with flake8
       run: |
-        uv run pip install flake8
         uv run flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
         uv run flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
     - name: Check dependencies security
       run: |
-        uv run pip install safety
         uv run safety check --full-report || true

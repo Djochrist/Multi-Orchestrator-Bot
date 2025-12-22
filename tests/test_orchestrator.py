@@ -2,8 +2,12 @@
 
 import pytest
 
+from orchestrator.adapters.simple_strategies import (
+    EMACrossover,
+    MeanReversion,
+    SMACrossover,
+)
 from orchestrator.orchestrator import TradingOrchestrator
-from orchestrator.adapters.simple_strategies import SMACrossover, EMACrossover, MeanReversion
 
 
 class TestTradingOrchestrator:
@@ -26,7 +30,7 @@ class TestTradingOrchestrator:
         assert best_strategy in orchestrator.strategies
 
         # Vérifier que la stratégie a un nom
-        assert hasattr(best_strategy, 'name')
+        assert hasattr(best_strategy, "name")
         assert best_strategy.name
 
     def test_get_all_strategies(self):

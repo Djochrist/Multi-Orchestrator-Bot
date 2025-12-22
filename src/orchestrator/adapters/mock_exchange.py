@@ -1,9 +1,9 @@
 """Échange simulé pour le paper trading."""
 
 import logging
-from typing import Dict, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -11,18 +11,20 @@ logger = logging.getLogger(__name__)
 @dataclass
 class Order:
     """Représentation d'un ordre."""
+
     order_id: str
     symbol: str
     side: str  # 'buy' or 'sell'
     quantity: float
     price: float
     timestamp: datetime
-    status: str = 'filled'  # 'pending', 'filled', 'cancelled'
+    status: str = "filled"  # 'pending', 'filled', 'cancelled'
 
 
 @dataclass
 class Position:
     """Représentation d'une position."""
+
     symbol: str
     quantity: float
     avg_price: float
@@ -38,13 +40,15 @@ class MockExchange:
         self.positions: Dict[str, Position] = {}
         self.orders: List[Order] = []
         self.order_counter = 0
-        self.current_prices: Dict[str, float] = {'BTC/USD': 50000.0}  # Prix par défaut
+        self.current_prices: Dict[str, float] = {"BTC/USD": 50000.0}  # Prix par défaut
 
     def set_current_price(self, symbol: str, price: float):
         """Met à jour le prix actuel pour un symbole."""
         self.current_prices[symbol] = price
 
-    def place_order(self, symbol: str, side: str, quantity: float, price: Optional[float] = None) -> str:
+    def place_order(
+        self, symbol: str, side: str, quantity: float, price: Optional[float] = None
+    ) -> str:
         """Place un ordre (simulé comme immédiatement exécuté)."""
         if price is None:
             price = self.current_prices.get(symbol, 100.0)
@@ -59,7 +63,7 @@ class MockExchange:
             quantity=quantity,
             price=price,
             timestamp=datetime.now(),
-            status='filled'
+            status="filled",
         )
 
         self.orders.append(order)
@@ -77,16 +81,12 @@ class MockExchange:
 
         if symbol not in self.positions:
             self.positions[symbol] = Position(
-                symbol=symbol,
-                quantity=0,
-                avg_price=0,
-                current_price=order.price,
-                pnl=0
+                symbol=symbol, quantity=0, avg_price=0, current_price=order.price, pnl=0
             )
 
         position = self.positions[symbol]
 
-        if order.side == 'buy':
+        if order.side == "buy":
             # Calculer le nouveau prix moyen
             total_quantity = position.quantity + order.quantity
             if total_quantity > 0:
@@ -105,7 +105,9 @@ class MockExchange:
         # Mettre à jour le PnL non réalisé
         if position.quantity != 0:
             position.current_price = self.current_prices.get(symbol, order.price)
-            position.pnl = (position.current_price - position.avg_price) * position.quantity
+            position.pnl = (
+                position.current_price - position.avg_price
+            ) * position.quantity
         else:
             position.pnl = 0
 
@@ -120,9 +122,10 @@ class MockExchange:
     def get_total_pnl(self) -> float:
         """Calcule le PnL total (réalisé + non réalisé)."""
         realized_pnl = sum(
-            (order.price - self._get_avg_price_at_time(order.symbol, order.timestamp)) * order.quantity
+            (order.price - self._get_avg_price_at_time(order.symbol, order.timestamp))
+            * order.quantity
             for order in self.orders
-            if order.side == 'sell'
+            if order.side == "sell"
         )
 
         unrealized_pnl = sum(pos.pnl for pos in self.positions.values())

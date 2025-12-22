@@ -4,9 +4,9 @@ import logging
 import time
 from typing import Optional
 
-from .orchestrator import TradingOrchestrator
 from .adapters.mock_exchange import MockExchange
 from .data_loader import generate_synthetic_data
+from .orchestrator import TradingOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +14,16 @@ logger = logging.getLogger(__name__)
 class PaperTrader:
     """Trader en papier utilisant la stratégie sélectionnée."""
 
-    def __init__(self, orchestrator: Optional[TradingOrchestrator] = None,
-                 exchange: Optional[MockExchange] = None):
+    def __init__(
+        self,
+        orchestrator: Optional[TradingOrchestrator] = None,
+        exchange: Optional[MockExchange] = None,
+    ):
         self.orchestrator = orchestrator or TradingOrchestrator()
         self.exchange = exchange or MockExchange()
         self.current_strategy = None
         self.current_signal = 0
-        self.symbol = 'BTC/USD'
+        self.symbol = "BTC/USD"
 
     def initialize(self):
         """Initialise le trader en sélectionnant la meilleure stratégie."""
@@ -50,28 +53,38 @@ class PaperTrader:
 
         for timestamp, row in df.iterrows():
             # Mettre à jour le prix actuel sur l'échange
-            self.exchange.set_current_price(self.symbol, row['close'])
+            self.exchange.set_current_price(self.symbol, row["close"])
 
             # Générer le signal pour cette période
             temp_df = df.loc[:timestamp].tail(50)  # Derniers 50 points pour calcul
             signals_df = self.current_strategy.generate_signals(temp_df)
-            current_signal = signals_df['signal'].iloc[-1] if not signals_df.empty else 0
+            current_signal = (
+                signals_df["signal"].iloc[-1] if not signals_df.empty else 0
+            )
 
             # Vérifier si le signal a changé
             if current_signal != self.current_signal:
-                logger.info(f"Changement de signal à {timestamp}: {self.current_signal} -> {current_signal}")
+                logger.info(
+                    f"Changement de signal à {timestamp}: {self.current_signal} -> {current_signal}"
+                )
 
                 # Fermer position existante si nécessaire
                 if position_quantity != 0:
-                    side = 'sell' if position_quantity > 0 else 'buy'
-                    self.exchange.place_order(self.symbol, side, abs(position_quantity), row['close'])
+                    side = "sell" if position_quantity > 0 else "buy"
+                    self.exchange.place_order(
+                        self.symbol, side, abs(position_quantity), row["close"]
+                    )
                     position_quantity = 0.0
 
                 # Ouvrir nouvelle position si signal non nul
                 if current_signal != 0:
-                    side = 'buy' if current_signal > 0 else 'sell'
-                    self.exchange.place_order(self.symbol, side, trade_quantity, row['close'])
-                    position_quantity = trade_quantity if current_signal > 0 else -trade_quantity
+                    side = "buy" if current_signal > 0 else "sell"
+                    self.exchange.place_order(
+                        self.symbol, side, trade_quantity, row["close"]
+                    )
+                    position_quantity = (
+                        trade_quantity if current_signal > 0 else -trade_quantity
+                    )
 
                 self.current_signal = current_signal
 
@@ -94,11 +107,13 @@ class PaperTrader:
 
         for symbol, pos in positions.items():
             if pos.quantity != 0:
-                logger.info(f"Position ouverte {symbol}: {pos.quantity} @ {pos.avg_price:.2f} (PnL: {pos.pnl:.2f})")
+                logger.info(
+                    f"Position ouverte {symbol}: {pos.quantity} @ {pos.avg_price:.2f} (PnL: {pos.pnl:.2f})"
+                )
 
         return {
-            'final_balance': final_balance,
-            'total_pnl': final_pnl,
-            'orders_count': len(self.exchange.orders),
-            'strategy_name': self.current_strategy.name
+            "final_balance": final_balance,
+            "total_pnl": final_pnl,
+            "orders_count": len(self.exchange.orders),
+            "strategy_name": self.current_strategy.name,
         }

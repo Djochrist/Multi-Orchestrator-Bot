@@ -1,11 +1,14 @@
 """Chargement et génération de données de marché."""
 
-import numpy as np
-import pandas as pd
 from datetime import datetime, timedelta
 
+import numpy as np
+import pandas as pd
 
-def generate_synthetic_data(days: int = 100, start_price: float = 100.0, volatility: float = 0.02) -> pd.DataFrame:
+
+def generate_synthetic_data(
+    days: int = 100, start_price: float = 100.0, volatility: float = 0.02
+) -> pd.DataFrame:
     """Génère des données OHLCV synthétiques pour les tests.
 
     Args:
@@ -35,7 +38,7 @@ def generate_synthetic_data(days: int = 100, start_price: float = 100.0, volatil
         if i == 0:
             open_price = start_price
         else:
-            open_price = data[-1]['close']
+            open_price = data[-1]["close"]
 
         # Générer high/low autour du close avec un peu de bruit
         high_noise = np.random.uniform(0, volatility * 0.5)
@@ -46,18 +49,20 @@ def generate_synthetic_data(days: int = 100, start_price: float = 100.0, volatil
         # Volume aléatoire
         volume = np.random.randint(1000, 10000)
 
-        data.append({
-            'timestamp': ts,
-            'open': round(open_price, 2),
-            'high': round(high, 2),
-            'low': round(low, 2),
-            'close': round(close, 2),
-            'volume': volume
-        })
+        data.append(
+            {
+                "timestamp": ts,
+                "open": round(open_price, 2),
+                "high": round(high, 2),
+                "low": round(low, 2),
+                "close": round(close, 2),
+                "volume": volume,
+            }
+        )
 
     df = pd.DataFrame(data)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-    df.set_index('timestamp', inplace=True)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df.set_index("timestamp", inplace=True)
 
     return df
 

@@ -1,7 +1,8 @@
 """Exécuteur d'ordres utilisant CCXT pour les échanges réels."""
 
 import logging
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 import ccxt
 
 from .mock_exchange import Order, Position
@@ -12,8 +13,13 @@ logger = logging.getLogger(__name__)
 class CCXTExecutor:
     """Exécuteur d'ordres pour échanges réels via CCXT."""
 
-    def __init__(self, exchange_id: str = 'binance', api_key: Optional[str] = None,
-                 api_secret: Optional[str] = None, sandbox: bool = True):
+    def __init__(
+        self,
+        exchange_id: str = "binance",
+        api_key: Optional[str] = None,
+        api_secret: Optional[str] = None,
+        sandbox: bool = True,
+    ):
         """
         Initialise l'exécuteur CCXT.
 
@@ -27,16 +33,20 @@ class CCXTExecutor:
 
         # Configuration de l'échange
         exchange_class = getattr(ccxt, exchange_id)
-        self.exchange = exchange_class({
-            'apiKey': api_key,
-            'secret': api_secret,
-            'sandbox': sandbox,
-            'enableRateLimit': True,
-        })
+        self.exchange = exchange_class(
+            {
+                "apiKey": api_key,
+                "secret": api_secret,
+                "sandbox": sandbox,
+                "enableRateLimit": True,
+            }
+        )
 
         logger.info(f"Initialisé CCXT executor pour {exchange_id} (sandbox: {sandbox})")
 
-    def place_order(self, symbol: str, side: str, quantity: float, price: Optional[float] = None) -> str:
+    def place_order(
+        self, symbol: str, side: str, quantity: float, price: Optional[float] = None
+    ) -> str:
         """
         Place un ordre sur l'échange réel.
 
@@ -59,7 +69,7 @@ class CCXTExecutor:
                 # Limit order
                 order = self.exchange.create_limit_order(symbol, side, quantity, price)
 
-            order_id = str(order['id'])
+            order_id = str(order["id"])
             logger.info(f"Ordre {side} {quantity} {symbol} placé: {order_id}")
             return order_id
 
@@ -86,11 +96,11 @@ class CCXTExecutor:
             positions = {}
 
             for currency, data in balance.items():
-                if data.get('total', 0) > 0:
+                if data.get("total", 0) > 0:
                     positions[currency] = {
-                        'quantity': data['total'],
-                        'free': data.get('free', 0),
-                        'used': data.get('used', 0),
+                        "quantity": data["total"],
+                        "free": data.get("free", 0),
+                        "used": data.get("used", 0),
                     }
 
             return positions

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Exemple d'exécution d'un backtest."""
 
-import sys
 import os
+import sys
 
 # Ajouter le répertoire src au path pour les imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from orchestrator.orchestrator import TradingOrchestrator
 from orchestrator.backtest_runner import run_backtest
 from orchestrator.data_loader import generate_synthetic_data
+from orchestrator.orchestrator import TradingOrchestrator
 
 
 def main():
@@ -25,7 +25,9 @@ def main():
     print(f"Données générées: {len(df)} points de données")
     print(f"Prix initial: ${df['close'].iloc[0]:.2f}")
     print(f"Prix final: ${df['close'].iloc[-1]:.2f}")
-    print(f"Rendement total du marché: {((df['close'].iloc[-1] / df['close'].iloc[0]) - 1) * 100:.2f}%\n")
+    print(
+        f"Rendement total du marché: {((df['close'].iloc[-1] / df['close'].iloc[0]) - 1) * 100:.2f}%\n"
+    )
 
     # Tester chaque stratégie individuellement
     print("Évaluation individuelle des stratégies:")

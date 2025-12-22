@@ -1,7 +1,8 @@
 """Stratégies de trading simples."""
 
-import pandas as pd
 from typing import Protocol
+
+import pandas as pd
 
 from ..strategy_interface import StrategyAdapter
 
@@ -20,13 +21,13 @@ class SMACrossover(StrategyAdapter):
     def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
         """Génère les signaux basé sur le croisement SMA."""
         df = df.copy()
-        df['sma_short'] = df['close'].rolling(window=self._short).mean()
-        df['sma_long'] = df['close'].rolling(window=self._long).mean()
+        df["sma_short"] = df["close"].rolling(window=self._short).mean()
+        df["sma_long"] = df["close"].rolling(window=self._long).mean()
 
         # Signal: 1 quand short > long, -1 quand short < long
-        df['signal'] = 0
-        df.loc[df['sma_short'] > df['sma_long'], 'signal'] = 1
-        df.loc[df['sma_short'] < df['sma_long'], 'signal'] = -1
+        df["signal"] = 0
+        df.loc[df["sma_short"] > df["sma_long"], "signal"] = 1
+        df.loc[df["sma_short"] < df["sma_long"], "signal"] = -1
 
         return df
 
@@ -45,13 +46,13 @@ class EMACrossover(StrategyAdapter):
     def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
         """Génère les signaux basé sur le croisement EMA."""
         df = df.copy()
-        df['ema_short'] = df['close'].ewm(span=self._short, adjust=False).mean()
-        df['ema_long'] = df['close'].ewm(span=self._long, adjust=False).mean()
+        df["ema_short"] = df["close"].ewm(span=self._short, adjust=False).mean()
+        df["ema_long"] = df["close"].ewm(span=self._long, adjust=False).mean()
 
         # Signal: 1 quand short > long, -1 quand short < long
-        df['signal'] = 0
-        df.loc[df['ema_short'] > df['ema_long'], 'signal'] = 1
-        df.loc[df['ema_short'] < df['ema_long'], 'signal'] = -1
+        df["signal"] = 0
+        df.loc[df["ema_short"] > df["ema_long"], "signal"] = 1
+        df.loc[df["ema_short"] < df["ema_long"], "signal"] = -1
 
         return df
 
@@ -72,14 +73,14 @@ class MeanReversion(StrategyAdapter):
         df = df.copy()
 
         # Calcul du z-score sur la fenêtre lookback
-        rolling_mean = df['close'].rolling(window=self._lookback).mean()
-        rolling_std = df['close'].rolling(window=self._lookback).std()
-        df['z_score'] = (df['close'] - rolling_mean) / rolling_std
+        rolling_mean = df["close"].rolling(window=self._lookback).mean()
+        rolling_std = df["close"].rolling(window=self._lookback).std()
+        df["z_score"] = (df["close"] - rolling_mean) / rolling_std
 
         # Signal: -1 quand z_score > thresh (prix élevé, vendre),
         # 1 quand z_score < -thresh (prix bas, acheter)
-        df['signal'] = 0
-        df.loc[df['z_score'] > self._z_thresh, 'signal'] = -1
-        df.loc[df['z_score'] < -self._z_thresh, 'signal'] = 1
+        df["signal"] = 0
+        df.loc[df["z_score"] > self._z_thresh, "signal"] = -1
+        df.loc[df["z_score"] < -self._z_thresh, "signal"] = 1
 
         return df
