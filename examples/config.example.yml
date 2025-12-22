@@ -1,0 +1,49 @@
+# Configuration exemple pour le bot de trading
+# Copiez ce fichier vers config.yml et ajustez les valeurs
+
+# Configuration générale
+general:
+  log_level: INFO
+  dry_run: true
+
+# Configuration du trading
+trading:
+  symbol: BTC/USD
+  default_quantity: 0.01
+  max_position_size: 0.1
+  max_trades_per_day: 5
+
+# Configuration des stratégies
+strategies:
+  sma_crossover:
+    short_period: 10
+    long_period: 50
+  ema_crossover:
+    short_period: 12
+    long_period: 26
+  mean_reversion:
+    lookback_period: 20
+    z_threshold: 1.5
+
+# Configuration du backtest
+backtest:
+  recent_days: 30
+  min_data_points: 50
+
+# Configuration des risques
+risk:
+  max_drawdown: 0.10  # 10%
+  stop_loss: 0.05     # 5%
+
+# Configuration des données
+data:
+  source: synthetic  # 'synthetic' ou 'api'
+  api_endpoint: null
+  update_interval: 60  # secondes
+
+# Configuration des échanges (pour mode live)
+exchanges:
+  binance:
+    api_key: your_api_key_here
+    api_secret: your_api_secret_here
+    sandbox: true

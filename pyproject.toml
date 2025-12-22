@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "multi-orchestrator-bot"
+version = "0.1.0"
+description = "Bot de trading multi-stratégies orchestré avec des algorithmes d'IA simples"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Cline", email = "cline@example.com"},
+]
+maintainers = [
+    {name = "Cline", email = "cline@example.com"},
+]
+keywords = ["trading", "bot", "strategy", "backtesting", "orchestrator"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+dependencies = [
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "ccxt>=4.0.0",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Djochrist/Multi-Orchestrator-Bot"
+Repository = "https://github.com/Djochrist/Multi-Orchestrator-Bot"
+Issues = "https://github.com/Djochrist/Multi-Orchestrator-Bot/issues"
+Changelog = "https://github.com/Djochrist/Multi-Orchestrator-Bot/blob/main/CHANGELOG.md"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/orchestrator"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --tb=short"
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["orchestrator"]
+known_third_party = ["pandas", "numpy", "ccxt", "yaml"]
