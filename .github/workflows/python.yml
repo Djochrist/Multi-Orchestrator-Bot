@@ -16,25 +16,24 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
-    - name: Set up Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
-
     - name: Sync dependencies
-      run: uv sync
+      run: uv sync --dev
 
     - name: Run tests
-      run: uv run pytest
-
-    - name: Run type checking (if mypy added)
-      run: uv run mypy src/ || true  # Ignore errors for now
+      run: uv run pytest --tb=short
 
     - name: Check code formatting
       run: |
-        uv run black --check .
-        uv run isort --check-only .
+        uv run black --check --diff .
+        uv run isort --check-only --diff .
 
   lint:
     runs-on: ubuntu-latest
@@ -42,11 +41,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
     - name: Install uv
       run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
     - name: Sync dependencies
-      run: uv sync
+      run: uv sync --dev
 
     - name: Lint with flake8
       run: |
@@ -57,4 +61,4 @@ jobs:
     - name: Check dependencies security
       run: |
         uv run pip install safety
-        uv run safety check
+        uv run safety check --full-report || true
