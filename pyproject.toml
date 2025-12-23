@@ -32,6 +32,8 @@ dependencies = [
     "pyyaml>=6.0",
     "ccxt>=4.0.0",
     "yfinance>=0.2.0",
+    "ta-lib>=0.4.25",
+    "scipy>=1.10.0",
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
 ]

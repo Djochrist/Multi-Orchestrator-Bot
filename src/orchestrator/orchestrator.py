@@ -3,7 +3,12 @@
 import logging
 from typing import List, Tuple
 
-from .adapters.simple_strategies import EMACrossover, MeanReversion, SMACrossover
+from .adapters.advanced_strategies import (
+    BreakoutRetestStrategy,
+    FibonacciRetracementStrategy,
+    OrderFlowImbalanceStrategy,
+    RiskRewardEnhancedStrategy
+)
 from .backtest_runner import run_backtest
 from .data_loader import load_recent_data
 from .strategy_interface import StrategyAdapter
@@ -15,7 +20,12 @@ class TradingOrchestrator:
     """Orchestrateur pour sélectionner la meilleure stratégie."""
 
     def __init__(self):
-        self.strategies = [SMACrossover(), EMACrossover(), MeanReversion()]
+        self.strategies = [
+            BreakoutRetestStrategy(),
+            FibonacciRetracementStrategy(),
+            OrderFlowImbalanceStrategy(),
+            RiskRewardEnhancedStrategy()
+        ]
 
     def select_best_strategy(self) -> StrategyAdapter:
         """Sélectionne la meilleure stratégie basée sur les métriques de backtest.
