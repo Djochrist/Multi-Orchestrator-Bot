@@ -43,22 +43,31 @@ source .venv/bin/activate
 
 ## Utilisation
 
+### Point d'entrée principal
+
+```bash
+python main.py papertrade --days 10 --quantity 0.01
+```
+
 ### Backtest
 
 ```bash
-uv run python examples/run_backtest_example.py
+python main.py backtest --symbol BTC-USD --days 100
 ```
 
 ### Paper Trading
 
 ```bash
-uv run python -m orchestrator.cli papertrade
+python main.py papertrade --days 10 --quantity 0.01
 ```
 
 ### Mode Live (Risque réel)
 
+**⚠️ ATTENTION: Le mode live n'est pas encore implémenté pour des raisons de sécurité.**
+
 ```bash
-LIVE=true uv run python -m orchestrator.cli papertrade
+# Cette commande échouera actuellement
+LIVE=true python main.py papertrade --days 10 --quantity 0.01
 ```
 
 ## Développement

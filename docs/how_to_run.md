@@ -36,44 +36,22 @@ source .venv/bin/activate
 
 ### Backtest Simple
 
-Exécutez l'exemple de backtest pour voir les performances des stratégies :
+Exécutez un backtest pour évaluer les stratégies sur des données réelles :
 
 ```bash
-uv run python examples/run_backtest_example.py
+python main.py backtest --symbol BTC-USD --days 100
 ```
 
 **Sortie attendue :**
 ```
-=== Exemple de Backtest Multi-Stratégies ===
-
-Téléchargement des données de marché réelles (BTC-USD)...
-Données chargées: 100 points de données
-Prix initial: $45000.00
-Prix final: $52000.00
-Rendement total du marché: 15.56%
-
-Évaluation individuelle des stratégies:
---------------------------------------------------
-Stratégie: SMA_10_50
-  Rendement total: 8.45%
-  Ratio Sharpe: 1.23
-  Max Drawdown: -8.12%
-  Nombre de trades: 15
-
-[... autres stratégies ...]
-
-Selection de la meilleure strategie:
---------------------------------------------------
-Strategie selectionnee: EMA_12_26
-  Rendement total: 12.34%
-  Ratio Sharpe: 1.45
-  Max Drawdown: -6.78%
-  Nombre de trades: 22
-
-=== Resume ===
-Backtest termine avec succes
-3 strategies evaluees
-Selection deterministe basee sur Sharpe > Return > Drawdown
+📊 RAPPORT DE BACKTEST
+📈 Symbole: BTC-USD
+📅 Période: 100 jours
+📋 Stratégie: EMA_12_26
+💰 Rendement total: +0.123
+📊 Ratio Sharpe: 1.45
+📉 Drawdown max: -0.067
+🔄 Nombre de trades: 22
 ```
 
 ### Paper Trading
@@ -81,7 +59,7 @@ Selection deterministe basee sur Sharpe > Return > Drawdown
 Simulez du trading en temps réel avec la stratégie sélectionnée :
 
 ```bash
-uv run python -m orchestrator.cli papertrade --days 10 --quantity 0.01
+python main.py papertrade --days 10 --quantity 0.01
 ```
 
 **Paramètres :**

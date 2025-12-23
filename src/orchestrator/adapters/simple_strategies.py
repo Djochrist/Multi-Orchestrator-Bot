@@ -20,6 +20,13 @@ class SMACrossover(StrategyAdapter):
 
     def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
         """Génère les signaux basé sur le croisement SMA."""
+        if df is None or df.empty:
+            raise ValueError("DataFrame vide ou None")
+        if len(df) < self._long:
+            raise ValueError(f"Données insuffisantes: {len(df)} points, besoin de {self._long} minimum")
+        if "close" not in df.columns:
+            raise ValueError("Colonne 'close' manquante dans les données")
+
         df = df.copy()
         df["sma_short"] = df["close"].rolling(window=self._short).mean()
         df["sma_long"] = df["close"].rolling(window=self._long).mean()
@@ -45,6 +52,13 @@ class EMACrossover(StrategyAdapter):
 
     def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
         """Génère les signaux basé sur le croisement EMA."""
+        if df is None or df.empty:
+            raise ValueError("DataFrame vide ou None")
+        if len(df) < self._long:
+            raise ValueError(f"Données insuffisantes: {len(df)} points, besoin de {self._long} minimum")
+        if "close" not in df.columns:
+            raise ValueError("Colonne 'close' manquante dans les données")
+
         df = df.copy()
         df["ema_short"] = df["close"].ewm(span=self._short, adjust=False).mean()
         df["ema_long"] = df["close"].ewm(span=self._long, adjust=False).mean()
@@ -70,6 +84,13 @@ class MeanReversion(StrategyAdapter):
 
     def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
         """Génère les signaux basé sur l'écart à la moyenne."""
+        if df is None or df.empty:
+            raise ValueError("DataFrame vide ou None")
+        if len(df) < self._lookback:
+            raise ValueError(f"Données insuffisantes: {len(df)} points, besoin de {self._lookback} minimum")
+        if "close" not in df.columns:
+            raise ValueError("Colonne 'close' manquante dans les données")
+
         df = df.copy()
 
         # Calcul du z-score sur la fenêtre lookback

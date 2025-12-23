@@ -1,11 +1,14 @@
 """Exécution des backtests pour évaluation des stratégies."""
 
+import logging
 from typing import Dict
 
 import numpy as np
 import pandas as pd
 
 from .strategy_interface import StrategyAdapter
+
+logger = logging.getLogger(__name__)
 
 
 def run_backtest(strategy: StrategyAdapter, df: pd.DataFrame) -> Dict[str, float]:
@@ -17,9 +20,32 @@ def run_backtest(strategy: StrategyAdapter, df: pd.DataFrame) -> Dict[str, float
 
     Returns:
         Dictionnaire avec métriques: total_return, sharpe, max_drawdown, trades_count
+
+    Raises:
+        ValueError: Si les paramètres sont invalides
     """
-    # Générer les signaux
-    df_signals = strategy.generate_signals(df)
+    # Validation des paramètres
+    if strategy is None:
+        raise ValueError("Stratégie non spécifiée")
+    if df is None or df.empty:
+        raise ValueError("DataFrame vide ou None")
+    if len(df) < 2:
+        raise ValueError(f"DataFrame trop petit: {len(df)} lignes, minimum 2 requises")
+    required_columns = ["open", "high", "low", "close", "volume"]
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    if missing_columns:
+        raise ValueError(f"Colonnes manquantes dans le DataFrame: {missing_columns}")
+
+    # Vérifier les valeurs NaN
+    if df[["open", "high", "low", "close", "volume"]].isnull().any().any():
+        logger.warning("Le DataFrame contient des valeurs NaN, elles seront ignorées")
+
+    try:
+        # Générer les signaux
+        df_signals = strategy.generate_signals(df)
+    except Exception as e:
+        logger.error(f"Erreur lors de la génération des signaux pour {strategy.name}: {e}")
+        raise ValueError(f"Échec de génération des signaux: {e}") from e
 
     # Calculer les rendements
     df_signals["returns"] = df_signals["close"].pct_change()

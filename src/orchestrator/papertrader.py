@@ -18,12 +18,17 @@ class PaperTrader:
         self,
         orchestrator: Optional[TradingOrchestrator] = None,
         exchange: Optional[MockExchange] = None,
+        initial_balance: float = 10000.0,
+        symbol: str = "BTC/USD"
     ):
+        if initial_balance <= 0:
+            raise ValueError("La balance initiale doit être positive")
         self.orchestrator = orchestrator or TradingOrchestrator()
-        self.exchange = exchange or MockExchange()
+        self.exchange = exchange or MockExchange(initial_balance=initial_balance)
         self.current_strategy = None
         self.current_signal = 0
-        self.symbol = "BTC/USD"
+        self.symbol = symbol
+        self.initial_balance = initial_balance
 
     def initialize(self):
         """Initialise le trader en sélectionnant la meilleure stratégie."""
@@ -112,8 +117,7 @@ class PaperTrader:
                 )
 
         # Calculer des statistiques détaillées
-        initial_balance = 10000.0  # Balance initiale par défaut
-        total_return_pct = (final_balance - initial_balance) / initial_balance * 100
+        total_return_pct = (final_balance - self.initial_balance) / self.initial_balance * 100
 
         # Analyser les trades - compter les paires ouverture/fermeture de position
         completed_trades = []
@@ -142,7 +146,7 @@ class PaperTrader:
         win_rate = winning_trades / len(completed_trades) * 100 if completed_trades else 0
 
         return {
-            "initial_balance": initial_balance,
+            "initial_balance": self.initial_balance,
             "final_balance": final_balance,
             "total_pnl": final_pnl,
             "total_return_pct": total_return_pct,

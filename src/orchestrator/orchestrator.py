@@ -3,14 +3,12 @@
 import logging
 from typing import List, Tuple
 
-from .adapters.advanced_strategies import (
-    BearMarketMomentumStrategy,
-    MeanReversionBearStrategy,
-    OrderFlowImbalanceStrategy
+from .adapters.simple_strategies import (
+    EMACrossover,
+    MeanReversion,
+    SMACrossover
 )
 
-# Pour compatibilité avec les anciennes références
-OrderFlowImbalanceStrategy = OrderFlowImbalanceStrategy
 from .backtest_runner import run_backtest
 from .data_loader import load_recent_data
 from .strategy_interface import StrategyAdapter
@@ -21,11 +19,13 @@ logger = logging.getLogger(__name__)
 class TradingOrchestrator:
     """Orchestrateur pour sélectionner la meilleure stratégie."""
 
-    def __init__(self):
+    def __init__(self, symbol: str = "BTC-USD", evaluation_days: int = 30):
+        self.symbol = symbol
+        self.evaluation_days = evaluation_days
         self.strategies = [
-            BearMarketMomentumStrategy(),
-            MeanReversionBearStrategy(),
-            OrderFlowImbalanceStrategy()
+            SMACrossover(),
+            EMACrossover(),
+            MeanReversion()
         ]
 
     def select_best_strategy(self) -> StrategyAdapter:
@@ -39,10 +39,10 @@ class TradingOrchestrator:
         Returns:
             La stratégie sélectionnée
         """
-        # Charger les données récentes (30 jours)
-        df = load_recent_data(days=30)
+        # Charger les données récentes
+        df = load_recent_data(symbol=self.symbol, days=self.evaluation_days)
         logger.info(
-            f"Évaluation de {len(self.strategies)} stratégies sur {len(df)} points de données"
+            f"Évaluation de {len(self.strategies)} stratégies sur {len(df)} points de données pour {self.symbol}"
         )
 
         # Évaluer chaque stratégie

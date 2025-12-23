@@ -5,6 +5,9 @@ import logging
 import os
 import sys
 
+from .backtest_runner import run_backtest
+from .data_loader import load_recent_data
+from .orchestrator import TradingOrchestrator
 from .papertrader import PaperTrader
 
 
@@ -19,9 +22,12 @@ def setup_logging():
 def main():
     """Point d'entrée principal."""
     parser = argparse.ArgumentParser(description="Multi-Orchestrator Trading Bot")
-    parser.add_argument("command", choices=["papertrade"], help="Commande à exécuter")
+    parser.add_argument("command", choices=["backtest", "papertrade"], help="Commande à exécuter")
     parser.add_argument(
-        "--days", type=int, default=10, help="Nombre de jours pour la simulation"
+        "--symbol", type=str, default="BTC-USD", help="Symbole de l'actif"
+    )
+    parser.add_argument(
+        "--days", type=int, default=30, help="Nombre de jours de données"
     )
     parser.add_argument(
         "--quantity", type=float, default=0.01, help="Quantité à trader"
@@ -44,7 +50,42 @@ def main():
         logger.warning("MODE LIVE ACTIVE - TRADING REEL")
         # Note: Dans une vraie implémentation, remplacer MockExchange par un vrai exchange
 
-    if args.command == "papertrade":
+    if args.command == "backtest":
+        logger.info(f"Démarrage du backtest pour {args.symbol} sur {args.days} jours...")
+
+        try:
+            # Charger les données
+            df = load_recent_data(symbol=args.symbol, days=args.days)
+            logger.info(f"Données chargées: {len(df)} points")
+
+            # Initialiser l'orchestrateur
+            orchestrator = TradingOrchestrator(symbol=args.symbol, evaluation_days=args.days)
+
+            # Sélectionner la meilleure stratégie
+            best_strategy = orchestrator.select_best_strategy()
+
+            # Exécuter le backtest
+            metrics = run_backtest(best_strategy, df)
+
+            # Afficher les résultats
+            print("\n" + "="*50)
+            print("📊 RAPPORT DE BACKTEST")
+            print("="*50)
+            print(f"📈 Symbole: {args.symbol}")
+            print(f"📅 Période: {args.days} jours")
+            print(f"📋 Stratégie: {best_strategy.name}")
+            print()
+            print(f"💰 Rendement total: {metrics['total_return']:+.3f}")
+            print(f"📊 Ratio Sharpe: {metrics['sharpe']:.3f}")
+            print(f"📉 Drawdown max: {metrics['max_drawdown']:.3f}")
+            print(f"🔄 Nombre de trades: {metrics['trades_count']}")
+            print("="*50)
+
+        except Exception as e:
+            logger.error(f"Erreur lors du backtest: {e}")
+            sys.exit(1)
+
+    elif args.command == "papertrade":
         logger.info("Démarrage du paper trading...")
 
         trader = PaperTrader()

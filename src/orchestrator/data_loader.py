@@ -1,10 +1,13 @@
-"""Chargement et génération de données de marché."""
+"""Chargement de données de marché."""
 
+import logging
 from datetime import datetime, timedelta
 from typing import Optional
 
 import pandas as pd
 import yfinance as yf
+
+logger = logging.getLogger(__name__)
 
 
 def download_market_data(
@@ -16,12 +19,24 @@ def download_market_data(
 
     Args:
         symbol: Symbole de l'actif (ex: 'BTC-USD', 'AAPL', '^GSPC')
-        days: Nombre de jours de données à récupérer
+        days: Nombre de jours de données à récupérer (1-365)
         interval: Intervalle des données ('1d', '1h', '15m', etc.)
 
     Returns:
         DataFrame avec colonnes: timestamp, open, high, low, close, volume
+
+    Raises:
+        ValueError: Si les paramètres sont invalides
     """
+    # Validation des paramètres
+    if not symbol or not isinstance(symbol, str):
+        raise ValueError("Le symbole doit être une chaîne non vide")
+    if not (1 <= days <= 365):
+        raise ValueError("Le nombre de jours doit être entre 1 et 365")
+    valid_intervals = ['1m', '2m', '5m', '15m', '30m', '60m', '90m', '1h', '1d', '5d', '1wk', '1mo', '3mo']
+    if interval not in valid_intervals:
+        raise ValueError(f"Interval invalide. Valeurs possibles: {valid_intervals}")
+
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
 
@@ -51,72 +66,8 @@ def download_market_data(
         return df
 
     except Exception as e:
-        print(f"Erreur lors du téléchargement des données pour {symbol}: {e}")
-        print("Retour aux données synthétiques...")
-        return generate_synthetic_data(days=days)
-
-
-def generate_synthetic_data(
-    days: int = 100, start_price: float = 50000.0, volatility: float = 0.02
-) -> pd.DataFrame:
-    """Génère des données OHLCV synthétiques en cas d'échec du téléchargement.
-
-    Args:
-        days: Nombre de jours de données
-        start_price: Prix de départ
-        volatility: Volatilité quotidienne
-
-    Returns:
-        DataFrame avec colonnes: timestamp, open, high, low, close, volume
-    """
-    import numpy as np
-
-    np.random.seed(42)  # Pour la reproductibilité
-
-    # Générer les timestamps
-    start_date = datetime.now() - timedelta(days=days)
-    timestamps = [start_date + timedelta(days=i) for i in range(days)]
-
-    # Générer les rendements aléatoires
-    returns = np.random.normal(0, volatility, days)
-    returns[0] = 0  # Premier jour pas de rendement
-
-    # Calculer les prix de clôture
-    closes = start_price * np.exp(np.cumsum(returns))
-
-    # Générer OHLCV
-    data = []
-    for i, (ts, close) in enumerate(zip(timestamps, closes)):
-        if i == 0:
-            open_price = start_price
-        else:
-            open_price = data[-1]["close"]
-
-        # Générer high/low autour du close avec un peu de bruit
-        high_noise = np.random.uniform(0, volatility * 0.5)
-        low_noise = np.random.uniform(0, volatility * 0.5)
-        high = max(open_price, close) * (1 + high_noise)
-        low = min(open_price, close) * (1 - low_noise)
-
-        # Volume aléatoire
-        volume = np.random.randint(1000000, 10000000)  # Volume plus réaliste
-
-        data.append(
-            {
-                "timestamp": ts,
-                "open": round(open_price, 2),
-                "high": round(high, 2),
-                "low": round(low, 2),
-                "close": round(close, 2),
-                "volume": volume,
-            }
-        )
-
-    df = pd.DataFrame(data)
-    df["timestamp"] = pd.to_datetime(df["timestamp"])
-    df.set_index("timestamp", inplace=True)
-
-    return df
+        logger.error(f"Erreur lors du téléchargement des données pour {symbol}: {e}")
+        raise ValueError(f"Impossible de télécharger les données pour {symbol}: {e}") from e
 
 
 def load_recent_data(symbol: str = "BTC-USD", days: int = 30) -> pd.DataFrame:
@@ -124,9 +75,14 @@ def load_recent_data(symbol: str = "BTC-USD", days: int = 30) -> pd.DataFrame:
 
     Args:
         symbol: Symbole de l'actif
-        days: Nombre de jours de données
+        days: Nombre de jours de données (min 7 pour les calculs de stratégies)
 
     Returns:
         DataFrame avec les données de marché
+
+    Raises:
+        ValueError: Si les paramètres sont invalides
     """
+    if days < 7:
+        raise ValueError("Au minimum 7 jours de données sont requis pour les calculs de stratégies")
     return download_market_data(symbol=symbol, days=days)
