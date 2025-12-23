@@ -50,7 +50,7 @@ class CCXTExecutor:
         """
         Place un ordre sur l'échange réel.
 
-        ⚠️ ATTENTION: Cette méthode exécute des ordres réels !
+        ATTENTION: Cette méthode exécute des ordres réels.
 
         Args:
             symbol: Symbole (ex: 'BTC/USDT')

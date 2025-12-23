@@ -41,7 +41,7 @@ def main():
         if not live_env:
             logger.error("Mode LIVE requis. Définissez LIVE=true dans l'environnement.")
             sys.exit(1)
-        logger.warning("⚠️ MODE LIVE ACTIVÉ - TRADING RÉEL !")
+        logger.warning("MODE LIVE ACTIVE - TRADING REEL")
         # Note: Dans une vraie implémentation, remplacer MockExchange par un vrai exchange
 
     if args.command == "papertrade":

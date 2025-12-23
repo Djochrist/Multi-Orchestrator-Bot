@@ -62,18 +62,18 @@ Stratégie: SMA_10_50
 
 [... autres stratégies ...]
 
-Sélection de la meilleure stratégie:
+Selection de la meilleure strategie:
 --------------------------------------------------
-🏆 Stratégie sélectionnée: EMA_12_26
+Strategie selectionnee: EMA_12_26
   Rendement total: 2.10%
   Ratio Sharpe: 1.15
   Max Drawdown: -2.30%
   Nombre de trades: 8
 
-=== Résumé ===
-✅ Backtest terminé avec succès
-📊 3 stratégies évaluées
-🎯 Sélection déterministe basée sur Sharpe > Return > Drawdown
+=== Resume ===
+Backtest termine avec succes
+3 strategies evaluees
+Selection deterministe basee sur Sharpe > Return > Drawdown
 ```
 
 ### Paper Trading
@@ -102,7 +102,7 @@ uv run python -m orchestrator.cli papertrade --days 10 --quantity 0.01
 2025-12-22 15:30:27 - orchestrator.papertrader - INFO - Nombre d'ordres: 4
 ```
 
-### Mode Live (⚠️ ATTENTION)
+### Mode Live (ATTENTION)
 
 **DANGER :** Le mode live exécute des ordres réels sur un échange !
 
@@ -251,6 +251,6 @@ multi-orchestrator-bot/
 
 ## Support
 
-- 📖 [Documentation complète](api.md)
-- 🏗️ [Architecture détaillée](architecture.md)
-- 🐛 Signaler un bug : [Issues GitHub](https://github.com/yourusername/multi-orchestrator-bot/issues)
+- [Documentation complete](api.md)
+- [Architecture detaillee](architecture.md)
+- Signaler un bug : [Issues GitHub](https://github.com/yourusername/multi-orchestrator-bot/issues)

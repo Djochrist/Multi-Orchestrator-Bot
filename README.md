@@ -55,7 +55,7 @@ uv run python examples/run_backtest_example.py
 uv run python -m orchestrator.cli papertrade
 ```
 
-### Mode Live (⚠️ Risque réel)
+### Mode Live (Risque réel)
 
 ```bash
 LIVE=true uv run python -m orchestrator.cli papertrade

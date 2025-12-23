@@ -50,18 +50,18 @@ def main():
     best_strategy = orchestrator.select_best_strategy()
     best_metrics = run_backtest(best_strategy, df)
 
-    print(f"🏆 Stratégie sélectionnée: {best_strategy.name}")
+    print(f"Strategie selectionnee: {best_strategy.name}")
     print(f"  Rendement total: {best_metrics['total_return']:.3f}")
     print(f"  Ratio Sharpe: {best_metrics['sharpe']:.3f}")
     print(f"  Max Drawdown: {best_metrics['max_drawdown']:.3f}")
     print(f"Nombre de trades: {best_metrics['trades_count']}")
     print()
 
-    # Résumé
-    print("=== Résumé ===")
-    print("✅ Backtest terminé avec succès")
-    print(f"📊 {len(orchestrator.get_all_strategies())} stratégies évaluées")
-    print("🎯 Sélection déterministe basée sur Sharpe > Return > Drawdown")
+    # Resume
+    print("=== Resume ===")
+    print("Backtest termine avec succes")
+    print(f"{len(orchestrator.get_all_strategies())} strategies evaluees")
+    print("Selection deterministe basee sur Sharpe > Return > Drawdown")
     print("\nNote: Ces résultats sont basés sur des données synthétiques.")
     print("Dans un environnement réel, utilisez des données historiques authentiques.")
 
