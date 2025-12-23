@@ -5,7 +5,7 @@ import time
 from typing import Optional
 
 from .adapters.mock_exchange import MockExchange
-from .data_loader import generate_synthetic_data
+from .data_loader import download_market_data
 from .orchestrator import TradingOrchestrator
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ class PaperTrader:
         # Les stratégies ont besoin d'au moins 50 points pour SMA/EMA 50
         min_history = 60
         total_days = max(days, min_history)
-        df = generate_synthetic_data(days=total_days, start_price=50000.0)
+        df = download_market_data(symbol="BTC-USD", days=total_days)
 
         position_quantity = 0.0  # Quantité détenue (positive = long, négative = short)
 

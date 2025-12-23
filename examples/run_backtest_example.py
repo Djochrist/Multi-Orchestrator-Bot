@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from orchestrator.backtest_runner import run_backtest
-from orchestrator.data_loader import generate_synthetic_data
+from orchestrator.data_loader import download_market_data
 from orchestrator.orchestrator import TradingOrchestrator
 
 
@@ -20,9 +20,9 @@ def main():
     orchestrator = TradingOrchestrator()
 
     # Charger des données de test
-    print("Génération des données de test...")
-    df = generate_synthetic_data(days=100, start_price=50000.0, volatility=0.02)
-    print(f"Données générées: {len(df)} points de données")
+    print("Téléchargement des données de marché réelles (BTC-USD)...")
+    df = download_market_data(symbol="BTC-USD", days=100)
+    print(f"Données chargées: {len(df)} points de données")
     print(f"Prix initial: ${df['close'].iloc[0]:.2f}")
     print(f"Prix final: ${df['close'].iloc[-1]:.2f}")
     print(
@@ -62,8 +62,8 @@ def main():
     print("Backtest termine avec succes")
     print(f"{len(orchestrator.get_all_strategies())} strategies evaluees")
     print("Selection deterministe basee sur Sharpe > Return > Drawdown")
-    print("\nNote: Ces résultats sont basés sur des données synthétiques.")
-    print("Dans un environnement réel, utilisez des données historiques authentiques.")
+    print("\nNote: Ces résultats sont basés sur des données de marché réelles (BTC-USD).")
+    print("Les performances passées ne garantissent pas les résultats futurs.")
 
 
 if __name__ == "__main__":

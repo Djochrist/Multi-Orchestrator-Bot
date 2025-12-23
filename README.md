@@ -4,7 +4,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue.svg)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Bot de trading multi-stratégies orchestré avec des algorithmes d'IA simples. Ce projet démontre une architecture claire pour l'orchestration de stratégies de trading, avec un focus sur la qualité logicielle et la reproductibilité.
+Bot de trading multi-stratégies orchestré avec des algorithmes d'IA simples utilisant des données de marché réelles. Ce projet démontre une architecture claire pour l'orchestration de stratégies de trading, avec un focus sur la qualité logicielle et la reproductibilité.
 
 ## Fonctionnalités
 

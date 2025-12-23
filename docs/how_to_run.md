@@ -46,29 +46,29 @@ uv run python examples/run_backtest_example.py
 ```
 === Exemple de Backtest Multi-Stratégies ===
 
-Génération des données de test...
-Données générées: 100 points de données
-Prix initial: $50000.00
-Prix final: $51234.56
-Rendement total du marché: 2.47%
+Téléchargement des données de marché réelles (BTC-USD)...
+Données chargées: 100 points de données
+Prix initial: $45000.00
+Prix final: $52000.00
+Rendement total du marché: 15.56%
 
 Évaluation individuelle des stratégies:
 --------------------------------------------------
 Stratégie: SMA_10_50
-  Rendement total: 1.23%
-  Ratio Sharpe: 0.85
-  Max Drawdown: -3.45%
-  Nombre de trades: 12
+  Rendement total: 8.45%
+  Ratio Sharpe: 1.23
+  Max Drawdown: -8.12%
+  Nombre de trades: 15
 
 [... autres stratégies ...]
 
 Selection de la meilleure strategie:
 --------------------------------------------------
 Strategie selectionnee: EMA_12_26
-  Rendement total: 2.10%
-  Ratio Sharpe: 1.15
-  Max Drawdown: -2.30%
-  Nombre de trades: 8
+  Rendement total: 12.34%
+  Ratio Sharpe: 1.45
+  Max Drawdown: -6.78%
+  Nombre de trades: 22
 
 === Resume ===
 Backtest termine avec succes
