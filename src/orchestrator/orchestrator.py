@@ -4,11 +4,13 @@ import logging
 from typing import List, Tuple
 
 from .adapters.advanced_strategies import (
-    BreakoutRetestStrategy,
-    FibonacciRetracementStrategy,
-    OrderFlowImbalanceStrategy,
-    RiskRewardEnhancedStrategy
+    BearMarketMomentumStrategy,
+    MeanReversionBearStrategy,
+    OrderFlowImbalanceStrategy
 )
+
+# Pour compatibilité avec les anciennes références
+OrderFlowImbalanceStrategy = OrderFlowImbalanceStrategy
 from .backtest_runner import run_backtest
 from .data_loader import load_recent_data
 from .strategy_interface import StrategyAdapter
@@ -21,10 +23,9 @@ class TradingOrchestrator:
 
     def __init__(self):
         self.strategies = [
-            BreakoutRetestStrategy(),
-            FibonacciRetracementStrategy(),
-            OrderFlowImbalanceStrategy(),
-            RiskRewardEnhancedStrategy()
+            BearMarketMomentumStrategy(),
+            MeanReversionBearStrategy(),
+            OrderFlowImbalanceStrategy()
         ]
 
     def select_best_strategy(self) -> StrategyAdapter:

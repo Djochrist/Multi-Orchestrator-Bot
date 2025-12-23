@@ -45,7 +45,11 @@ class TestPaperTrader:
         result = trader.run_simulation(days=5, trade_quantity=0.001)
 
         # Vérifier les clés du résultat
-        expected_keys = {"final_balance", "total_pnl", "orders_count", "strategy_name"}
+        expected_keys = {
+            "initial_balance", "final_balance", "total_pnl", "total_return_pct",
+            "orders_count", "trades_count", "winning_trades", "losing_trades",
+            "win_rate", "avg_trade_pnl", "strategy_name"
+        }
         assert set(result.keys()) == expected_keys
 
         # Vérifier les types

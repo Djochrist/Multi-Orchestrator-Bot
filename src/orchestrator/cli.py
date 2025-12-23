@@ -51,7 +51,27 @@ def main():
         try:
             result = trader.run_simulation(days=args.days, trade_quantity=args.quantity)
             logger.info("Paper trading terminé avec succès")
-            print(f"Résultats: {result}")
+
+            # Afficher les résultats de manière formatée
+            print("\n" + "="*50)
+            print("📊 RAPPORT DE PERFORMANCE - PAPER TRADING")
+            print("="*50)
+            print(f"💰 Balance initiale: ${result['initial_balance']:,.2f}")
+            print(f"💰 Balance finale: ${result['final_balance']:,.2f}")
+            print(f"📈 PnL total: ${result['total_pnl']:,.2f}")
+            print(f"📊 Rendement total: {result['total_return_pct']:+.2f}%")
+            print()
+            print(f"📋 Stratégie utilisée: {result['strategy_name']}")
+            print(f"🔄 Nombre d'ordres: {result['orders_count']}")
+            print(f"📊 Nombre de trades: {result['trades_count']}")
+            print()
+            if result['trades_count'] > 0:
+                print(f"🎯 Trades gagnants: {result['winning_trades']}")
+                print(f"❌ Trades perdants: {result['losing_trades']}")
+                print(f"🏆 Taux de réussite: {result['win_rate']:.1f}%")
+                print(f"📊 PnL moyen par trade: ${result['avg_trade_pnl']:,.2f}")
+            print("="*50)
+
         except Exception as e:
             logger.error(f"Erreur lors du paper trading: {e}")
             sys.exit(1)

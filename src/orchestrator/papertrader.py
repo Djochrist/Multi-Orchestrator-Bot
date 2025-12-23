@@ -111,9 +111,46 @@ class PaperTrader:
                     f"Position ouverte {symbol}: {pos.quantity} @ {pos.avg_price:.2f} (PnL: {pos.pnl:.2f})"
                 )
 
+        # Calculer des statistiques détaillées
+        initial_balance = 10000.0  # Balance initiale par défaut
+        total_return_pct = (final_balance - initial_balance) / initial_balance * 100
+
+        # Analyser les trades - compter les paires ouverture/fermeture de position
+        completed_trades = []
+        i = 0
+        while i < len(self.exchange.orders) - 1:
+            current_order = self.exchange.orders[i]
+            next_order = self.exchange.orders[i + 1]
+
+            # Si c'est une ouverture de position suivie d'une fermeture
+            if ((current_order.side == "buy" and next_order.side == "sell") or
+                (current_order.side == "sell" and next_order.side == "buy")):
+
+                if current_order.side == "buy":  # Long trade: buy -> sell
+                    trade_pnl = (next_order.price - current_order.price) * current_order.quantity
+                else:  # Short trade: sell -> buy
+                    trade_pnl = (current_order.price - next_order.price) * current_order.quantity
+
+                completed_trades.append(trade_pnl)
+                i += 2  # Passer les deux ordres
+            else:
+                i += 1  # Avancer d'un ordre seulement
+
+        winning_trades = sum(1 for pnl in completed_trades if pnl > 0)
+        losing_trades = sum(1 for pnl in completed_trades if pnl <= 0)
+        avg_trade_pnl = sum(completed_trades) / len(completed_trades) if completed_trades else 0
+        win_rate = winning_trades / len(completed_trades) * 100 if completed_trades else 0
+
         return {
+            "initial_balance": initial_balance,
             "final_balance": final_balance,
             "total_pnl": final_pnl,
+            "total_return_pct": total_return_pct,
             "orders_count": len(self.exchange.orders),
+            "trades_count": len(completed_trades),
+            "winning_trades": winning_trades,
+            "losing_trades": losing_trades,
+            "win_rate": win_rate,
+            "avg_trade_pnl": avg_trade_pnl,
             "strategy_name": self.current_strategy.name,
         }

@@ -63,53 +63,45 @@ Cette stratégie utilise les niveaux de retracement de Fibonacci pour identifier
 ## Order Flow Imbalance Strategy
 
 ### Principe
-Cette stratégie analyse l'imbalance entre acheteurs et vendeurs en combinant volume et direction des prix pour identifier des mouvements impulsifs.
+Cette stratégie détecte les imbalances entre acheteurs et vendeurs en combinant volume relatif et momentum des prix pour identifier les mouvements impulsifs du marché.
 
 ### Règles d'Entrée
-- **Achat** : Volume > Volume moyen × 1.1 + Momentum > 0.5% + Chandelier haussier
-- **Vente** : Volume > Volume moyen × 1.1 + Momentum < -0.5% + Chandelier baissier
+- **Achat** : Imbalance normalisée > seuil + Volume > Volume moyen × multiplicateur + Momentum > 0
+- **Vente** : Imbalance normalisée < -seuil + Volume > Volume moyen × multiplicateur + Momentum < 0
 
 ### Paramètres
+- `imbalance_threshold` : Seuil d'imbalance normalisée (défaut: 0.7)
 - `volume_window` : Fenêtre pour calculer volume moyen (défaut: 20)
-- `momentum_period` : Période pour calculer momentum (défaut: 10)
+- `momentum_window` : Période pour calculer momentum (défaut: 10)
+- `min_volume_multiplier` : Multiplicateur du volume moyen requis (défaut: 1.5)
 
 ### Indicateurs Utilisés
-- Ratio volume (volume actuel / volume moyen)
-- Momentum prix (variation en pourcentage)
-- Direction du chandelier (close > open pour achat)
+- **Imbalance** : Volume ratio × Momentum prix
+- **Imbalance normalisée** : Imbalance / Écart-type sur fenêtre
+- **Momentum** : (Prix actuel - Prix retardé) / Prix retardé
+- **Volume ratio** : Volume actuel / Volume moyen
 
 ### Avantages
-- Capture les mouvements impulsifs du marché
-- Moins sensible au bruit à court terme
-- Bonne performance dans les marchés volatiles
+- Détecte les mouvements impulsifs avant qu'ils ne deviennent évidents
+- Utilise des seuils adaptatifs basés sur la volatilité
+- Performant dans les marchés avec forte activité de volume
 
-## Risk/Reward Enhanced Strategy
+## Mises à Jour Récentes
 
-### Principe
-Stratégie complète combinant moyennes mobiles, RSI, ATR et gestion du drawdown pour un trading équilibré.
+### Suppression de RiskRewardEnhancedStrategy
+La stratégie RiskRewardEnhanced a été supprimée car elle générait trop peu de signaux avec les conditions restrictives actuelles du marché. Les stratégies restantes ont été optimisées pour être plus adaptatives.
 
-### Règles d'Entrée
-- **Achat** : MA rapide > MA lente + RSI < 30 + Drawdown > -5% + Momentum positif
-- **Vente** : MA rapide < MA lente + RSI > 70 + Drawdown > -5% + Momentum négatif
+### Changement des Noms de Stratégies
+Les noms des stratégies incluent désormais leurs paramètres principaux pour une meilleure traçabilité :
+- `BreakoutRetest_20_0.01` → Période 20, seuil 1%
+- `FibRetracement_50_3` → Période 50, 3 niveaux Fib
+- `OrderFlowImbalance_20_1.5` → Période 20, seuil 1.5
 
-### Paramètres
-- `fast_ma` : Période MA rapide (défaut: 9)
-- `slow_ma` : Période MA lente (défaut: 21)
-- `rsi_period` : Période RSI (défaut: 14)
-- `rsi_overbought` : Niveau surachat (défaut: 70)
-- `rsi_oversold` : Niveau survente (défaut: 30)
-- `max_drawdown_pct` : Drawdown maximum (défaut: 0.05 = 5%)
-
-### Indicateurs Utilisés
-- Moyennes mobiles exponentielles (EMA)
-- RSI pour timing des entrées
-- ATR pour stop loss dynamique
-- Drawdown rolling pour contrôle du risque
-
-### Avantages
-- Gestion complète du risque
-- Multiple confirmations avant entrée
-- Adaptable à différentes conditions de marché
+### Optimisations Apportées
+1. **Conditions d'entrée assouplies** : Réduction des seuils pour générer plus de signaux
+2. **Confirmation de volume** : Intégration de critères de volume réalistes
+3. **Gestion du risque améliorée** : Stop loss et take profit dynamiques
+4. **Backtesting étendu** : Utilisation de backtrader pour tests sur 1 an
 
 ## Optimisation des Paramètres
 

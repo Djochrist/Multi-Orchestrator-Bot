@@ -90,16 +90,26 @@ uv run python -m orchestrator.cli papertrade --days 10 --quantity 0.01
 
 **Sortie attendue :**
 ```
-2025-12-22 15:30:27 - orchestrator.orchestrator - INFO - Évaluation de 3 stratégies sur 30 points de données
-2025-12-22 15:30:27 - orchestrator.orchestrator - INFO - Stratégie sélectionnée: MeanRev_20_1.5
-2025-12-22 15:30:27 - orchestrator.papertrader - INFO - Démarrage de la simulation sur 10 jours
-2025-12-22 15:30:27 - orchestrator.mock_exchange - INFO - Ordre exécuté: buy 0.01 BTC/USD @ 51234.56
-[... logs de trading ...]
-2025-12-22 15:30:27 - orchestrator.papertrader - INFO - === RAPPORT FINAL ===
-2025-12-22 15:30:27 - orchestrator.papertrader - INFO - Balance finale: 10015.67
-2025-12-22 15:30:27 - orchestrator.papertrader - INFO - PnL total: 15.67
-2025-12-22 15:30:27 - orchestrator.papertrader - INFO - Stratégie utilisée: MeanRev_20_1.5
-2025-12-22 15:30:27 - orchestrator.papertrader - INFO - Nombre d'ordres: 4
+2025-12-23 10:15:44 - orchestrator.orchestrator - INFO - Évaluation de 3 stratégies sur 31 points de données
+2025-12-23 10:15:44 - orchestrator.orchestrator - INFO - Stratégie sélectionnée: MeanRevBear_15_2.2
+2025-12-23 10:15:44 - orchestrator.papertrader - INFO - Démarrage de la simulation sur 10 jours
+[... logs de trading détaillés ...]
+2025-12-23 10:15:46 - orchestrator.papertrader - INFO - === RAPPORT FINAL ===
+
+📊 RAPPORT DE PERFORMANCE - PAPER TRADING
+💰 Balance initiale: $10,000.00
+💰 Balance finale: $10,286.30
+📈 PnL total: $3,810.06
+📊 Rendement total: +2.86%
+
+📋 Stratégie utilisée: MeanRevBear_15_2.2
+🔄 Nombre d'ordres: 8
+📊 Nombre de trades: 4
+
+🎯 Trades gagnants: 4
+❌ Trades perdants: 0
+🏆 Taux de réussite: 100.0%
+📊 PnL moyen par trade: $71.58
 ```
 
 ### Mode Live (ATTENTION)

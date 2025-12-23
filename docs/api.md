@@ -96,7 +96,7 @@ class MeanReversion(StrategyAdapter):
 
 ### PaperTrader
 
-Simulateur de trading en temps réel.
+Simulateur de trading en temps réel avec rapports détaillés.
 
 ```python
 class PaperTrader:
@@ -110,17 +110,30 @@ class PaperTrader:
         """
 
     def initialize(self):
-        """Sélectionne la meilleure stratégie."""
+        """Sélectionne la meilleure stratégie via backtest."""
 
     def run_simulation(self, days: int = 10, trade_quantity: float = 0.01) -> Dict[str, Any]:
-        """Exécute une simulation de trading.
+        """Exécute une simulation de trading avec analyse détaillée.
 
         Args:
             days: Nombre de jours à simuler
             trade_quantity: Quantité par trade
 
         Returns:
-            Dictionnaire avec résultats de simulation
+            Dictionnaire détaillé avec statistiques complètes:
+            {
+                "initial_balance": float,      # Balance de départ
+                "final_balance": float,        # Balance finale
+                "total_pnl": float,            # PnL total
+                "total_return_pct": float,     # Rendement total en %
+                "orders_count": int,           # Nombre total d'ordres
+                "trades_count": int,           # Nombre de trades complets
+                "winning_trades": int,         # Trades gagnants
+                "losing_trades": int,          # Trades perdants
+                "win_rate": float,             # Taux de réussite en %
+                "avg_trade_pnl": float,        # PnL moyen par trade
+                "strategy_name": str           # Nom de la stratégie utilisée
+            }
         """
 ```
 
@@ -355,5 +368,10 @@ trader.initialize()
 # Lancer une simulation
 results = trader.run_simulation(days=30, trade_quantity=0.01)
 
-print(f"PnL final: ${results['total_pnl']:.2f}")
-print(f"Ordres exécutés: {results['orders_count']}")
+print(f"Balance initiale: ${results['initial_balance']:,.2f}")
+print(f"Balance finale: ${results['final_balance']:,.2f}")
+print(f"PnL total: ${results['total_pnl']:,.2f}")
+print(f"Rendement: {results['total_return_pct']:+.2f}%")
+print(f"Trades: {results['trades_count']} (Gagnants: {results['winning_trades']}, Perdants: {results['losing_trades']})")
+print(f"Taux de réussite: {results['win_rate']:.1f}%")
+print(f"PnL moyen par trade: ${results['avg_trade_pnl']:,.2f}")
