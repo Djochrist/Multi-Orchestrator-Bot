@@ -37,8 +37,6 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Synchroniser les dépendances
 uv sync
 
-# Activer l'environnement
-source .venv/bin/activate
 ```
 
 ## Utilisation
