@@ -2,10 +2,10 @@
 
 import pytest
 
-from orchestrator.adapters.advanced_strategies import (
-    BearMarketMomentumStrategy,
-    MeanReversionBearStrategy,
-    OrderFlowImbalanceStrategy,
+from orchestrator.adapters.simple_strategies import (
+    EMACrossover,
+    MeanReversion,
+    SMACrossover,
 )
 from orchestrator.orchestrator import TradingOrchestrator
 
@@ -17,9 +17,9 @@ class TestTradingOrchestrator:
         """Test d'initialisation de l'orchestrateur."""
         orchestrator = TradingOrchestrator()
         assert len(orchestrator.strategies) == 3
-        assert isinstance(orchestrator.strategies[0], BearMarketMomentumStrategy)
-        assert isinstance(orchestrator.strategies[1], MeanReversionBearStrategy)
-        assert isinstance(orchestrator.strategies[2], OrderFlowImbalanceStrategy)
+        assert isinstance(orchestrator.strategies[0], SMACrossover)
+        assert isinstance(orchestrator.strategies[1], EMACrossover)
+        assert isinstance(orchestrator.strategies[2], MeanReversion)
 
     def test_select_best_strategy(self):
         """Test de sélection de la meilleure stratégie."""

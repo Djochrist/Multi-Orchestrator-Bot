@@ -55,7 +55,7 @@ class TestEMACrossover:
         """Test de génération des signaux."""
         strategy = EMACrossover()
 
-        df = generate_synthetic_data(days=20)
+        df = generate_synthetic_data(days=30)  # Assez de données pour EMA 26
         result = strategy.generate_signals(df)
 
         assert "signal" in result.columns

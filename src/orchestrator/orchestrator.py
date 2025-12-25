@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class TradingOrchestrator:
     """Orchestrateur pour sélectionner la meilleure stratégie."""
 
-    def __init__(self, symbol: str = "BTC-USD", evaluation_days: int = 30):
+    def __init__(self, symbol: str = "BTC-USD", evaluation_days: int = 100):
         self.symbol = symbol
         self.evaluation_days = evaluation_days
         self.strategies = [

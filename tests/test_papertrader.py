@@ -3,6 +3,7 @@
 import pytest
 
 from orchestrator.adapters.mock_exchange import MockExchange
+from orchestrator.data_loader import generate_synthetic_data
 from orchestrator.orchestrator import TradingOrchestrator
 from orchestrator.papertrader import PaperTrader
 
@@ -39,51 +40,89 @@ class TestPaperTrader:
 
     def test_run_simulation_basic(self):
         """Test de base de la simulation."""
+        # Utiliser des données synthétiques suffisantes pour les tests
+        df = generate_synthetic_data(days=80)  # Assez de données pour SMA/EMA
+
         trader = PaperTrader()
         trader.initialize()
 
-        result = trader.run_simulation(days=5, trade_quantity=0.001)
+        # Mock la fonction de téléchargement pour utiliser nos données synthétiques
+        import orchestrator.papertrader as pt_module
+        original_download = pt_module.download_market_data
 
-        # Vérifier les clés du résultat
-        expected_keys = {
-            "initial_balance", "final_balance", "total_pnl", "total_return_pct",
-            "orders_count", "trades_count", "winning_trades", "losing_trades",
-            "win_rate", "avg_trade_pnl", "strategy_name"
-        }
-        assert set(result.keys()) == expected_keys
+        def mock_download(**kwargs):
+            return df
 
-        # Vérifier les types
-        assert isinstance(result["final_balance"], float)
-        assert isinstance(result["total_pnl"], float)
-        assert isinstance(result["orders_count"], int)
-        assert isinstance(result["strategy_name"], str)
+        pt_module.download_market_data = mock_download
 
-        # Vérifier que le nom de stratégie correspond
-        assert result["strategy_name"] == trader.current_strategy.name
+        try:
+            result = trader.run_simulation(days=5, trade_quantity=0.001)
+
+            # Vérifier les clés du résultat
+            expected_keys = {
+                "initial_balance", "final_balance", "total_pnl", "total_return_pct",
+                "orders_count", "trades_count", "winning_trades", "losing_trades",
+                "win_rate", "avg_trade_pnl", "strategy_name"
+            }
+            assert set(result.keys()) == expected_keys
+
+            # Vérifier les types
+            assert isinstance(result["final_balance"], float)
+            assert isinstance(result["total_pnl"], float)
+            assert isinstance(result["orders_count"], int)
+            assert isinstance(result["strategy_name"], str)
+
+            # Vérifier que le nom de stratégie correspond
+            assert result["strategy_name"] == trader.current_strategy.name
+        finally:
+            # Restaurer la fonction originale
+            pt_module.download_market_data = original_download
 
     def test_run_simulation_no_crash(self):
         """Test que la simulation ne crash pas."""
+        # Utiliser des données synthétiques suffisantes pour les tests
+        df = generate_synthetic_data(days=80)
+
         trader = PaperTrader()
 
-        # Ne pas appeler initialize pour tester le comportement par défaut
-        result = trader.run_simulation(days=3)
+        # Mock la fonction de téléchargement
+        import orchestrator.papertrader as pt_module
+        original_download = pt_module.download_market_data
+        pt_module.download_market_data = lambda **kwargs: df
 
-        assert "final_balance" in result
-        assert "total_pnl" in result
-        assert "orders_count" in result
-        assert "strategy_name" in result
+        try:
+            # Ne pas appeler initialize pour tester le comportement par défaut
+            result = trader.run_simulation(days=3)
+
+            assert "final_balance" in result
+            assert "total_pnl" in result
+            assert "orders_count" in result
+            assert "strategy_name" in result
+        finally:
+            pt_module.download_market_data = original_download
 
     def test_exchange_interaction(self):
         """Test de l'interaction avec l'échange."""
+        # Utiliser des données synthétiques suffisantes pour les tests
+        df = generate_synthetic_data(days=80)
+
         exchange = MockExchange(initial_balance=1000.0)
         trader = PaperTrader(exchange=exchange)
 
         # Vérifier le balance initial
         assert trader.exchange.get_balance() == 1000.0
 
-        # Après simulation, le balance peut changer
-        trader.initialize()
-        result = trader.run_simulation(days=2)
+        # Mock la fonction de téléchargement
+        import orchestrator.papertrader as pt_module
+        original_download = pt_module.download_market_data
+        pt_module.download_market_data = lambda **kwargs: df
 
-        # Le balance final devrait être différent ou identique selon les trades
-        assert isinstance(result["final_balance"], (int, float))
+        try:
+            # Après simulation, le balance peut changer
+            trader.initialize()
+            result = trader.run_simulation(days=2)
+
+            # Le balance final devrait être différent ou identique selon les trades
+            assert isinstance(result["final_balance"], (int, float))
+        finally:
+            pt_module.download_market_data = original_download

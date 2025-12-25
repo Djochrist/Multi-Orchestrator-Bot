@@ -203,16 +203,20 @@ def run_backtest(strategy: StrategyAdapter, df: pd.DataFrame) -> Dict[str, float
 Génère des données OHLCV synthétiques pour les tests.
 
 ```python
-def generate_synthetic_data(days: int = 100, start_price: float = 100.0, volatility: float = 0.02) -> pd.DataFrame:
-    """Génère des données synthétiques.
+def generate_synthetic_data(days: int = 100, start_price: float = 100.0, volatility: float = 0.02, seed: Optional[int] = 42) -> pd.DataFrame:
+    """Génère des données synthétiques avec relations OHLC réalistes.
 
     Args:
-        days: Nombre de jours
+        days: Nombre de jours de données à générer
         start_price: Prix de départ
-        volatility: Volatilité quotidienne
+        volatility: Volatilité quotidienne (pourcentage)
+        seed: Graine pour la reproductibilité
 
     Returns:
-        DataFrame avec colonnes [timestamp, open, high, low, close, volume]
+        DataFrame avec colonnes [open, high, low, close, volume] et index datetime
+
+    Raises:
+        ValueError: Si les paramètres sont invalides
     """
 ```
 
@@ -236,13 +240,21 @@ def load_recent_data(days: int = 30) -> pd.DataFrame:
 
 ### Config
 
-Classe de configuration centralisée.
+Classe de configuration centralisée avec support fichier YAML et variables d'environnement.
 
 ```python
 class Config:
     @classmethod
+    def load_from_file(cls, config_path: Optional[str] = None) -> None:
+        """Charge la configuration depuis un fichier YAML.
+
+        Args:
+            config_path: Chemin vers le fichier de configuration
+        """
+
+    @classmethod
     def get(cls, key: str, default: Any = None) -> Any:
-        """Récupère une valeur de configuration.
+        """Récupère une valeur de configuration avec priorité: env > fichier > défaut.
 
         Args:
             key: Clé avec notation point (ex: 'trading.symbol')
@@ -257,7 +269,151 @@ class Config:
         """Vérifie si le mode live est activé.
 
         Returns:
-            True si LIVE=true dans l'environnement
+            True si LIVE=true dans l'environnement ou config
+        """
+
+    @classmethod
+    def validate_config(cls) -> None:
+        """Valide la configuration chargée.
+
+        Raises:
+            ConfigError: Si la configuration est invalide
+        """
+```
+
+## Sécurité
+
+### SecurityManager
+
+Gestionnaire central de sécurité avec validation, rate limiting et gestion d'API.
+
+```python
+class SecurityManager:
+    def check_request_allowed(self, identifier: str) -> bool:
+        """Vérifie si une requête est autorisée.
+
+        Args:
+            identifier: Identifiant de la requête
+
+        Returns:
+            True si autorisée
+
+        Raises:
+            SecurityError: Si bloquée ou taux dépassé
+        """
+
+    def block_entity(self, identifier: str) -> None:
+        """Bloque une entité.
+
+        Args:
+            identifier: Identifiant à bloquer
+        """
+
+    def unblock_entity(self, identifier: str) -> None:
+        """Débloque une entité.
+
+        Args:
+            identifier: Identifiant à débloquer
+        """
+```
+
+### InputValidator
+
+Validateur d'entrée pour sécuriser les données utilisateur.
+
+```python
+class InputValidator:
+    @staticmethod
+    def validate_symbol(symbol: str) -> str:
+        """Valide un symbole de trading.
+
+        Args:
+            symbol: Symbole à valider (ex: "BTC/USD")
+
+        Returns:
+            Symbole validé
+
+        Raises:
+            SecurityError: Si invalide
+        """
+
+    @staticmethod
+    def validate_quantity(quantity: float) -> float:
+        """Valide une quantité de trading.
+
+        Args:
+            quantity: Quantité à valider
+
+        Returns:
+            Quantité validée
+
+        Raises:
+            SecurityError: Si invalide
+        """
+
+    @staticmethod
+    def validate_api_key(api_key: str) -> str:
+        """Valide et hash une clé API.
+
+        Args:
+            api_key: Clé API à valider
+
+        Returns:
+            Hash de la clé API
+
+        Raises:
+            SecurityError: Si invalide
+        """
+```
+
+### RateLimiter
+
+Limiteur de taux pour contrôler la fréquence des requêtes.
+
+```python
+class RateLimiter:
+    def __init__(self, max_requests: int = 10, time_window: int = 60):
+        """Initialise le limiteur.
+
+        Args:
+            max_requests: Nombre maximum de requêtes par fenêtre
+            time_window: Fenêtre de temps en secondes
+        """
+
+    def is_allowed(self, identifier: str) -> bool:
+        """Vérifie si une requête est autorisée.
+
+        Args:
+            identifier: Identifiant unique
+
+        Returns:
+            True si autorisée
+        """
+```
+
+### APIKeyManager
+
+Gestionnaire de clés API avec rotation automatique.
+
+```python
+class APIKeyManager:
+    def add_key(self, service: str, api_key: str, secret_key: Optional[str] = None) -> None:
+        """Ajoute une clé API pour un service.
+
+        Args:
+            service: Nom du service (ex: 'binance')
+            api_key: Clé API
+            secret_key: Clé secrète (optionnel)
+        """
+
+    def get_key(self, service: str) -> Optional[Dict]:
+        """Récupère une clé API pour un service.
+
+        Args:
+            service: Nom du service
+
+        Returns:
+            Informations de clé ou None si expirée
         """
 ```
 
@@ -306,6 +462,11 @@ metrics = {
 - **ValueError** : Paramètres invalides
 - **ConnectionError** : Problème de connexion API (mode live)
 - **InsufficientFundsError** : Fonds insuffisants (mode live)
+- **ConfigError** : Erreur de configuration
+- **SecurityError** : Violation de sécurité (rate limiting, validation, etc.)
+- **InvalidDataError** : Données de marché invalides
+- **StrategyExecutionError** : Erreur d'exécution de stratégie
+- **CalculationError** : Erreur de calcul des métriques
 
 ### Logging
 

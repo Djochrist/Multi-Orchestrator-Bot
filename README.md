@@ -63,7 +63,7 @@ python main.py papertrade --days 10 --quantity 0.01
 
 ### Mode Live (Risque réel)
 
-**⚠️ ATTENTION: Le mode live n'est pas encore implémenté pour des raisons de sécurité.**
+**ATTENTION: Le mode live n'est pas encore implémenté pour des raisons de sécurité.**
 
 ```bash
 # Cette commande échouera actuellement

@@ -19,7 +19,8 @@ class TestBacktestRunner:
         result = run_backtest(strategy, df)
 
         # Vérifier les clés présentes
-        expected_keys = {"total_return", "sharpe", "max_drawdown", "trades_count"}
+        expected_keys = {"total_return", "sharpe", "max_drawdown", "trades_count",
+                        "win_rate", "avg_win", "avg_loss"}
         assert set(result.keys()) == expected_keys
 
         # Vérifier les types
@@ -27,10 +28,16 @@ class TestBacktestRunner:
         assert isinstance(result["sharpe"], float)
         assert isinstance(result["max_drawdown"], float)
         assert isinstance(result["trades_count"], int)
+        assert isinstance(result["win_rate"], float)
+        assert isinstance(result["avg_win"], float)
+        assert isinstance(result["avg_loss"], float)
 
         # Vérifier les plages raisonnables
         assert result["max_drawdown"] <= 0  # Drawdown est négatif ou nul
         assert result["trades_count"] >= 0
+        assert 0 <= result["win_rate"] <= 1  # Win rate entre 0 et 1
+        assert result["avg_win"] >= 0  # Gains moyens positifs
+        assert result["avg_loss"] <= 0  # Pertes moyennes négatives
 
     def test_run_backtest_with_different_strategies(self):
         """Test avec différentes stratégies."""
@@ -52,7 +59,7 @@ class TestBacktestRunner:
         """Test que les résultats sont déterministes."""
         strategy = SMACrossover()
         df = generate_synthetic_data(
-            days=40, volatility=0.01
+            days=60, volatility=0.01
         )  # Faible volatilité pour stabilité
 
         result1 = run_backtest(strategy, df)
