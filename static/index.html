@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Orchestrator-Bot</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>Multi-Orchestrator-Bot</h1>
+            <div class="header-actions">
+                <button id="refresh-btn" class="btn btn-primary">Actualiser</button>
+            </div>
+        </header>
+
+        <nav class="nav">
+            <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+            <button class="nav-btn" data-page="strategies">Stratégies</button>
+            <button class="nav-btn" data-page="trades">Trades</button>
+            <button class="nav-btn" data-page="market">Marché</button>
+        </nav>
+
+        <main class="main">
+            <!-- Dashboard -->
+            <div id="dashboard-page" class="page active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>PnL Total</h3>
+                        <div class="stat-value" id="total-pnl">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Positions Ouvertes</h3>
+                        <div class="stat-value" id="open-positions">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Stratégies Actives</h3>
+                        <div class="stat-value" id="active-strategies">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Status API</h3>
+                        <div class="stat-value status-healthy" id="api-status">Vérification...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stratégies -->
+            <div id="strategies-page" class="page">
+                <div class="page-header">
+                    <h2>Stratégies de Trading</h2>
+                    <button id="add-strategy-btn" class="btn btn-primary">Ajouter Stratégie</button>
+                </div>
+                <div id="strategies-list" class="data-list">
+                    <!-- Les stratégies seront chargées ici -->
+                </div>
+            </div>
+
+            <!-- Trades -->
+            <div id="trades-page" class="page">
+                <div class="page-header">
+                    <h2>Trades</h2>
+                    <button id="add-trade-btn" class="btn btn-primary">Nouveau Trade</button>
+                </div>
+                <div id="trades-list" class="data-list">
+                    <!-- Les trades seront chargés ici -->
+                </div>
+            </div>
+
+            <!-- Marché -->
+            <div id="market-page" class="page">
+                <div class="page-header">
+                    <h2>Données de Marché</h2>
+                    <button id="refresh-market-btn" class="btn btn-secondary">Actualiser</button>
+                </div>
+                <div id="market-data" class="market-grid">
+                    <!-- Les données de marché seront chargées ici -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="strategy-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="strategy-modal-title">Nouvelle Stratégie</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="strategy-form">
+                <div class="form-group">
+                    <label for="strategy-name">Nom</label>
+                    <input type="text" id="strategy-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="strategy-description">Description</label>
+                    <textarea id="strategy-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="strategy-type">Type</label>
+                    <select id="strategy-type" required>
+                        <option value="rsi">RSI</option>
+                        <option value="macd">MACD</option>
+                        <option value="manual">Manuel</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="trade-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nouveau Trade</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="trade-form">
+                <div class="form-group">
+                    <label for="trade-symbol">Symbole</label>
+                    <input type="text" id="trade-symbol" value="BTC" required>
+                </div>
+                <div class="form-group">
+                    <label for="trade-side">Côté</label>
+                    <select id="trade-side" required>
+                        <option value="buy">Achat</option>
+                        <option value="sell">Vente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trade-quantity">Quantité</label>
+                    <input type="number" id="trade-quantity" step="0.000001" required>
+                </div>
+                <div class="form-group">
+                    <label for="trade-price">Prix (optionnel)</label>
+                    <input type="number" id="trade-price" step="0.01">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer Trade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
