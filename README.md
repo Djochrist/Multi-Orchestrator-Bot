@@ -17,12 +17,9 @@ claire entre la logique de trading, l’orchestration et l’interface utilisate
 
 ## Démonstration
 
-```html
-<video width="100%" controls>
-  <source src="demo.webm" type="video/webm">
-  Votre navigateur ne supporte pas la lecture vidéo.
-</video>
-```
+📹 [Voir la démonstration vidéo](démo.webm)
+
+*La vidéo montre le fonctionnement de l'interface web et des stratégies de trading en temps réel.*
 ---
 
 ## Architecture du projet
