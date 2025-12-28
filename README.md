@@ -17,9 +17,11 @@ claire entre la logique de trading, l’orchestration et l’interface utilisate
 
 ## Démonstration
 
-📹 [Voir la démonstration vidéo](démo.webm)
+![Démonstration Multi-Orchestrator-Bot](demo.gif)
 
-*La vidéo montre le fonctionnement de l'interface web et des stratégies de trading en temps réel.*
+*La démonstration animée montre le fonctionnement de l'interface web et des stratégies de trading en temps réel.*
+
+📹 [Voir la vidéo complète (WebM)](démo.webm)
 ---
 
 ## Architecture du projet
